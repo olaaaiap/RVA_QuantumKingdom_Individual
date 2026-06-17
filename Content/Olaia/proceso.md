@@ -198,3 +198,86 @@ El sistema permite:
 - Reducir la munición al disparar.
 - Impedir disparos cuando la munición llega a cero.
 
+# PASO 3: Sistema de vidas, daño e invulnerabilidad temporal
+
+## Objetivo
+
+Implementar un sistema básico de vida para el jugador, junto con una mecánica de daño con invulnerabilidad temporal (3 segundos) para evitar recibir daño continuo.
+
+---
+
+## Cambios realizados
+
+### 1. Sistema de vidas en el VRPawn
+
+Se añadieron variables al `OlaiaVRPawn`:
+
+```
+CurrentLives
+```
+
+- Tipo: Integer  
+- Representa las vidas actuales del jugador
+
+---
+
+### 2. Sistema de invulnerabilidad
+
+Se añadió la variable:
+
+```
+bIsInvulnerable
+```
+
+- Tipo: Boolean  
+- Controla si el jugador puede recibir daño
+
+---
+
+## 3. Lógica de daño
+
+Se creó una función en el VRPawn:
+
+```
+TakeDamage
+```
+
+### Funcionamiento:
+
+- Si el jugador está en estado de invulnerabilidad → no recibe daño
+- Si no lo está:
+  - Se resta 1 vida a `CurrentLives`
+  - Se activa `bIsInvulnerable`
+
+---
+
+## 4. Invulnerabilidad temporal
+
+Tras recibir daño:
+
+- Se activa un timer de 3 segundos
+- Durante ese tiempo el jugador no puede volver a recibir daño
+- Pasado el tiempo, la invulnerabilidad se desactiva
+
+---
+
+## 5. Sistema de pruebas (enemigo temporal)
+
+Para testear el sistema sin enemigos implementados:
+
+- Se creó un Blueprint con una **Sphere Collision**
+- Al detectar el jugador:
+  - Llama a `TakeDamage`
+
+Esto simula el comportamiento de un enemigo de forma básica.
+
+---
+
+## Estado actual
+
+El sistema permite:
+
+- Control de vidas del jugador
+- Recepción de daño controlada
+- Invulnerabilidad temporal tras recibir daño
+- Pruebas de combate mediante una esfera en el nivel
