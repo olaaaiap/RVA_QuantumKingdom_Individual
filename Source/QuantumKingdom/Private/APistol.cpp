@@ -58,14 +58,25 @@ void AAPistol::OnShootRight()
 
 void AAPistol::TryShoot(bool bIsLeftHand)
 {
-	if (CurrentAmmo <= 0) return;
+
+	
+	
+	if (CurrentAmmo <= 0) {
+		return;
+	}
 
 	SpawnProjectile(bIsLeftHand);
 }
 
 void AAPistol::SpawnProjectile(bool bIsLeftHand)
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan,
+		FString::Printf(TEXT("ProjectileClass: %s"), ProjectileClass ? TEXT("OK") : TEXT("NULL")));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan,
+		FString::Printf(TEXT("MuzzleLocation: %s"), MuzzleLocation ? TEXT("OK") : TEXT("NULL")));
+
 	if (!ProjectileClass || !MuzzleLocation) return;
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("CON AMMO"));
 
 	UWorld* World = GetWorld();
 	if (!World) return;
@@ -139,6 +150,7 @@ void AAPistol::AddWeaponInputContext()
 
 	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PC->InputComponent))
 	{
+
 		if (IA_Shoot_Left)
 			EIC->BindAction(IA_Shoot_Left, ETriggerEvent::Started, this, &AAPistol::OnShootLeft);
 
