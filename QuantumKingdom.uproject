@@ -4,12 +4,15 @@
 	"Category": "",
 	"Description": "",
 	"Modules": [
-           {
-            "Name": "QuantumKingdom",
-            "Type": "Runtime",
-            "LoadingPhase": "Default"
-      	    }
-    	],
+		{
+			"Name": "QuantumKingdom",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	],
 	"Plugins": [
 		{
 			"Name": "OpenXR",
@@ -46,7 +49,11 @@
 				"Win64",
 				"Android"
 			]
-		}
+		},
+		{
+        		"Name": "EnhancedInput",
+        		"Enabled": true
+    		}
 	],
 	"TargetPlatforms": [
 		"Android",

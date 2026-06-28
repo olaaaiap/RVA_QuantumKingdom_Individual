@@ -47,30 +47,7 @@ void AAProjectile::BeginPlay()
 
 }
 
-//// Called every frame
-//void AAProjectile::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
 
-//void AAProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-//	if (!OtherActor || !OtherComp) return;
-//
-//	// ── Branch: Is Simulating Physics? ───────────────────────────
-//	if (OtherComp->IsSimulatingPhysics())
-//	{
-//		// Impulso = velocidad actual del proyectil * 1.0
-//		// (el nodo multiply por 1.0 es identidad; ajusta el escalar si necesitas más fuerza)
-//		FVector Impulse = ProjectileMovement->Velocity * 1.0f;
-//
-//		OtherComp->AddImpulse(Impulse, NAME_None, /*bVelChange=*/false);
-//	}
-//
-//	// ── Tags del actor golpeado ───────────────────────────────────
-//	HandleTagActions(OtherActor);
-//}
 void AAProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor || !OtherComp) return;
@@ -114,44 +91,7 @@ void AAProjectile::OnProjectileStop(const FHitResult& ImpactResult)
 		);
 	}
 }
-//
-//void AAProjectile::HandleTagActions(AActor* OtherActor)
-//{
-//	if (!OtherActor) return;
-//	if (GEngine)
-//	{
-//		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
-//			FString::Printf(TEXT("Hit actor: %s"), *OtherActor->GetName()));
-//	}
-//	// Tag "Play"  → Open Level "Ship"
-//	if (OtherActor->ActorHasTag(FName("Play")))
-//	{
-//		UGameplayStatics::OpenLevel(this, FName("Ship"));
-//		return; // una sola acción por frame
-//	}
-//
-//	// Tag "Settings" → Print String (placeholder; reemplaza por tu lógica real)
-//	if (OtherActor->ActorHasTag(FName("Settings")))
-//	{
-//		if (GEngine)
-//		{
-//			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow,
-//				TEXT("[VRProjectile] Settings hit"));
-//		}
-//		return;
-//	}
-//
-//	// Tag "Exit" → Quit Game
-//	if (OtherActor->ActorHasTag(FName("Exit")))
-//	{
-//		UKismetSystemLibrary::QuitGame(
-//			this,
-//			UGameplayStatics::GetPlayerController(this, 0),
-//			EQuitPreference::Quit,
-//			/*bIgnorePlatformRestrictions=*/false
-//		);
-//	}
-//}
+
 
 void AAProjectile::HandleTagActions(AActor* OtherActor, UPrimitiveComponent* OtherComp)
 {
