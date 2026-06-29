@@ -88,22 +88,16 @@ void AADamageSphere::OnSphereBeginOverlap(
 {
 	if (!OtherActor) return;
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White,
-		FString::Printf(TEXT("Overlap con: %s"), *OtherActor->GetName()));
-
+	
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White,
-		FString::Printf(TEXT("PlayerPawn es: %s"), PlayerPawn ? *PlayerPawn->GetName() : TEXT("NULL")));
-
+	
 	if (OtherActor != PlayerPawn) return;
 
 	FName FuncName = FName("TakeDamage");
 	UFunction* Func = OtherActor->FindFunction(FuncName);
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White,
-		FString::Printf(TEXT("Funcion Take Damage: %s"), Func ? TEXT("ENCONTRADA") : TEXT("NO ENCONTRADA")));
-
+	
 	if (Func)
 		OtherActor->ProcessEvent(Func, nullptr);
 }

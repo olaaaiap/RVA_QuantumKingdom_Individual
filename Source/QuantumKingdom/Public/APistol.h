@@ -87,4 +87,7 @@ public:
 	void AddWeaponInputContext();
 	void RemoveWeaponInputContext();
 
+private:
+	UPROPERTY()
+	UUserWidget* CachedWidget;
 };

@@ -25,8 +25,9 @@ AAPistol::AAPistol()
 	// GrabComponentSnap se gestiona desde el BP, no se crea aquí
 
 	// Valores por defecto
-	CurrentAmmo = 10;
-	MaxAmmo = 10;
+	CurrentAmmo = 500;
+	MaxAmmo = 1000;
+
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +35,13 @@ void AAPistol::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+		{
+			if (AmmoWidget)
+				CachedWidget = AmmoWidget->GetUserWidgetObject();
+			UpdateAmmoWidget();
+		}, 0.5f, false);
 }
 
 void AAPistol::OnWeaponGrabbed()
@@ -70,14 +78,9 @@ void AAPistol::TryShoot(bool bIsLeftHand)
 
 void AAPistol::SpawnProjectile(bool bIsLeftHand)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan,
-		FString::Printf(TEXT("ProjectileClass: %s"), ProjectileClass ? TEXT("OK") : TEXT("NULL")));
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan,
-		FString::Printf(TEXT("MuzzleLocation: %s"), MuzzleLocation ? TEXT("OK") : TEXT("NULL")));
-
+	
 	if (!ProjectileClass || !MuzzleLocation) return;
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("CON AMMO"));
-
+	
 	UWorld* World = GetWorld();
 	if (!World) return;
 
@@ -111,34 +114,51 @@ void AAPistol::SpawnProjectile(bool bIsLeftHand)
 		PC->PlayHapticEffect(PistolFireHapticEffect, Hand, 1.0f, false);
 	}
 
-	// Debug
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan,
-			FString::Printf(TEXT("Ammo: %d / %d"), CurrentAmmo, MaxAmmo));
-	}
 }
+
+//void AAPistol::UpdateAmmoWidget()
+//{
+//	if (!AmmoWidget) return;
+//
+//	UUserWidget* Widget = AmmoWidget->GetUserWidgetObject();
+//	if (!Widget) return;
+//
+//	// Munición actual
+//	UTextBlock* AmmoText = Cast<UTextBlock>(
+//		Widget->GetWidgetFromName(FName("TextBlock_AMMO_available"))
+//	);
+//	if (AmmoText)
+//		AmmoText->SetText(FText::AsNumber(CurrentAmmo));
+//
+//	// Munición máxima
+//	UTextBlock* MaxAmmoText = Cast<UTextBlock>(
+//		Widget->GetWidgetFromName(FName("TextBlock_AMMO_storage"))
+//	);
+//	if (MaxAmmoText)
+//		MaxAmmoText->SetText(FText::AsNumber(MaxAmmo));
+//}
 
 void AAPistol::UpdateAmmoWidget()
 {
-	if (!AmmoWidget) return;
+	
+	if (!CachedWidget) return;
 
-	UUserWidget* Widget = AmmoWidget->GetUserWidgetObject();
-	if (!Widget) return;
-
-	// Munición actual
 	UTextBlock* AmmoText = Cast<UTextBlock>(
-		Widget->GetWidgetFromName(FName("TextBlock_AMMO_a"))
+		CachedWidget->GetWidgetFromName(FName("TextBlock_AMMO_available"))
 	);
-	if (AmmoText)
-		AmmoText->SetText(FText::AsNumber(CurrentAmmo));
-
-	// Munición máxima
 	UTextBlock* MaxAmmoText = Cast<UTextBlock>(
-		Widget->GetWidgetFromName(FName("TextBlock_AMMO_st"))
+		CachedWidget->GetWidgetFromName(FName("TextBlock_AMMO_storage"))
 	);
+
+	if (AmmoText)
+	{
+		//AmmoText->SetText(FText::AsNumber(CurrentAmmo));
+		AmmoText->SetText(FText::FromString(FString::FromInt(CurrentAmmo)));
+	}
+
 	if (MaxAmmoText)
-		MaxAmmoText->SetText(FText::AsNumber(MaxAmmo));
+		//MaxAmmoText->SetText(FText::AsNumber(MaxAmmo));
+		MaxAmmoText->SetText(FText::FromString(FString::FromInt(MaxAmmo)));
 }
 
 void AAPistol::AddWeaponInputContext()

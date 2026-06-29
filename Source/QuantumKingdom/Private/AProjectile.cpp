@@ -97,12 +97,7 @@ void AAProjectile::HandleTagActions(AActor* OtherActor, UPrimitiveComponent* Oth
 {
 	if (!OtherActor || !OtherComp) return;
 
-	// Debug — muestra el nombre del componente golpeado
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-			FString::Printf(TEXT("Hit component: %s"), *OtherComp->GetName()));
-	}
+	
 
 	// Comprueba tag en el actor Y en el componente
 	bool bHasPlay = OtherActor->ActorHasTag("Play") || OtherComp->ComponentHasTag("Play");
