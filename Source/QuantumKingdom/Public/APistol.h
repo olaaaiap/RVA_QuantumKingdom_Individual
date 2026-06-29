@@ -81,7 +81,7 @@ protected:
 	void OnShootRight();
 
 public:	
-	void TryShoot(bool bIsLeftHand);
+	virtual void TryShoot(bool bIsLeftHand);
 	void SpawnProjectile(bool bIsLeftHand);
 	void UpdateAmmoWidget();
 	void AddWeaponInputContext();

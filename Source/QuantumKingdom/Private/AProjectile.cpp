@@ -26,7 +26,7 @@ AAProjectile::AAProjectile()
 	ProjectileMovement->UpdatedComponent = SphereCollision;
 	ProjectileMovement->bShouldBounce = false;
 
-	ProjectileMovement->InitialSpeed = 500.f;      // velocidad inicial
+	ProjectileMovement->InitialSpeed = 1000.f;      // velocidad inicial
 	ProjectileMovement->MaxSpeed = 3000.f;           // velocidad máxima
 	ProjectileMovement->ProjectileGravityScale = 0.f; // 0 = sin gravedad, 1 = gravedad normal
 
