@@ -5,5 +5,6 @@
 
 void AAPistolMenu::TryShoot(bool bIsLeftHand)
 {
+    if (!bIsHeld) return;
     SpawnProjectile(bIsLeftHand);
 }

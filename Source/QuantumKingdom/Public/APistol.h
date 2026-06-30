@@ -80,6 +80,9 @@ protected:
 	void OnShootLeft();
 	void OnShootRight();
 
+	UPROPERTY()
+	bool bIsHeld = false;
+
 public:	
 	virtual void TryShoot(bool bIsLeftHand);
 	void SpawnProjectile(bool bIsLeftHand);

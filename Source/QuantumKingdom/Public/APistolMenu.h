@@ -16,4 +16,6 @@ class QUANTUMKINGDOM_API AAPistolMenu : public AAPistol
 	
 protected:
 	virtual void TryShoot(bool bIsLeftHand) override;
+
+
 };

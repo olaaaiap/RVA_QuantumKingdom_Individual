@@ -46,11 +46,13 @@ void AAPistol::BeginPlay()
 
 void AAPistol::OnWeaponGrabbed()
 {
+	bIsHeld = true;
 	AddWeaponInputContext();
 }
 
 void AAPistol::OnWeaponDropped()
 {
+	bIsHeld = false;
 	RemoveWeaponInputContext();
 }
 
@@ -66,9 +68,7 @@ void AAPistol::OnShootRight()
 
 void AAPistol::TryShoot(bool bIsLeftHand)
 {
-
-	
-	
+	if (!bIsHeld) return;
 	if (CurrentAmmo <= 0) {
 		return;
 	}
@@ -161,6 +161,7 @@ void AAPistol::UpdateAmmoWidget()
 
 void AAPistol::AddWeaponInputContext()
 {
+
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	if (!PC) return;
 
@@ -191,6 +192,7 @@ void AAPistol::AddWeaponInputContext()
 
 void AAPistol::RemoveWeaponInputContext()
 {
+
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	if (!PC) return;
 
@@ -201,6 +203,7 @@ void AAPistol::RemoveWeaponInputContext()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
 			LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("RemoveWeaponInputContext called"));
 			if (IMC_Weapon_Left)
 				Subsystem->RemoveMappingContext(IMC_Weapon_Left);
 
