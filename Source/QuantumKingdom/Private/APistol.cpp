@@ -152,13 +152,13 @@ void AAPistol::UpdateAmmoWidget()
 
 	if (AmmoText)
 	{
-		//AmmoText->SetText(FText::AsNumber(CurrentAmmo));
-		AmmoText->SetText(FText::FromString(FString::FromInt(CurrentAmmo)));
+		AmmoText->SetText(FText::AsNumber(CurrentAmmo));
+		//AmmoText->SetText(FText::FromString(FString::FromInt(CurrentAmmo)));
 	}
 
 	if (MaxAmmoText)
-		//MaxAmmoText->SetText(FText::AsNumber(MaxAmmo));
-		MaxAmmoText->SetText(FText::FromString(FString::FromInt(MaxAmmo)));
+		MaxAmmoText->SetText(FText::AsNumber(MaxAmmo));
+		//MaxAmmoText->SetText(FText::FromString(FString::FromInt(MaxAmmo)));
 }
 
 void AAPistol::AddWeaponInputContext()
