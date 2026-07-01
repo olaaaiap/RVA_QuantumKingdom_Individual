@@ -4,33 +4,24 @@
 #include "APistol.h"
 #include <Kismet/GameplayStatics.h>
 
-// Sets default values
 AAPistol::AAPistol()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// SM_Pistol como root
 	SM_Pistol = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Pistol"));
 	RootComponent = SM_Pistol;
 
-	// MuzzleLocation — punto de spawn del proyectil
 	MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
 	MuzzleLocation->SetupAttachment(SM_Pistol);
 
-	// AmmoWidget — widget 3D en el mundo
 	AmmoWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("AmmoWidget"));
 	AmmoWidget->SetupAttachment(SM_Pistol);
 
-	// GrabComponentSnap se gestiona desde el BP, no se crea aquí
-
-	// Valores por defecto
 	CurrentAmmo = 500;
 	MaxAmmo = 1000;
 
 }
 
-// Called when the game starts or when spawned
 void AAPistol::BeginPlay()
 {
 	Super::BeginPlay();
@@ -38,8 +29,7 @@ void AAPistol::BeginPlay()
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 		{
-			if (AmmoWidget)
-				CachedWidget = AmmoWidget->GetUserWidgetObject();
+			if (AmmoWidget) CachedWidget = AmmoWidget->GetUserWidgetObject();
 			UpdateAmmoWidget();
 		}, 0.5f, false);
 }
@@ -78,17 +68,12 @@ void AAPistol::TryShoot(bool bIsLeftHand)
 
 void AAPistol::SpawnProjectile(bool bIsLeftHand)
 {
-	
 	if (!ProjectileClass || !MuzzleLocation) return;
 	
 	UWorld* World = GetWorld();
 	if (!World) return;
 
-	// Spawn en MuzzleLocation
-	FTransform SpawnTransform(
-		MuzzleLocation->GetComponentRotation(),
-		MuzzleLocation->GetComponentLocation()
-	);
+	FTransform SpawnTransform(MuzzleLocation->GetComponentRotation(),MuzzleLocation->GetComponentLocation());
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
@@ -96,17 +81,12 @@ void AAPistol::SpawnProjectile(bool bIsLeftHand)
 
 	World->SpawnActor<AAProjectile>(ProjectileClass, SpawnTransform, SpawnParams);
 
-	// Restar munición
 	CurrentAmmo = FMath::Max(0, CurrentAmmo - 1);
 
-	// Actualizar widget
 	UpdateAmmoWidget();
 
-	// Reproducir sonido
-	if (FireSound)
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+	if (FireSound) UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 
-	// Haptic feedback en la mano correcta
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	if (PC && PistolFireHapticEffect)
 	{
@@ -116,52 +96,27 @@ void AAPistol::SpawnProjectile(bool bIsLeftHand)
 
 }
 
-//void AAPistol::UpdateAmmoWidget()
-//{
-//	if (!AmmoWidget) return;
-//
-//	UUserWidget* Widget = AmmoWidget->GetUserWidgetObject();
-//	if (!Widget) return;
-//
-//	// Munición actual
-//	UTextBlock* AmmoText = Cast<UTextBlock>(
-//		Widget->GetWidgetFromName(FName("TextBlock_AMMO_available"))
-//	);
-//	if (AmmoText)
-//		AmmoText->SetText(FText::AsNumber(CurrentAmmo));
-//
-//	// Munición máxima
-//	UTextBlock* MaxAmmoText = Cast<UTextBlock>(
-//		Widget->GetWidgetFromName(FName("TextBlock_AMMO_storage"))
-//	);
-//	if (MaxAmmoText)
-//		MaxAmmoText->SetText(FText::AsNumber(MaxAmmo));
-//}
 
 void AAPistol::UpdateAmmoWidget()
 {
 	
 	if (!CachedWidget) return;
 
-	UTextBlock* AmmoText = Cast<UTextBlock>(
-		CachedWidget->GetWidgetFromName(FName("TextBlock_AMMO_available"))
-	);
-	UTextBlock* MaxAmmoText = Cast<UTextBlock>(
-		CachedWidget->GetWidgetFromName(FName("TextBlock_AMMO_storage"))
-	);
+	UTextBlock* AmmoText = Cast<UTextBlock>(CachedWidget->GetWidgetFromName(FName("TextBlock_AMMO_available")));
+	UTextBlock* MaxAmmoText = Cast<UTextBlock>(CachedWidget->GetWidgetFromName(FName("TextBlock_AMMO_storage")));
 
 	if (AmmoText)
 	{
 		AmmoText->SetText(FText::AsNumber(CurrentAmmo));
 	}
 
-	if (MaxAmmoText)
+	if (MaxAmmoText) {
 		MaxAmmoText->SetText(FText::AsNumber(MaxAmmo));
+	}
 }
 
 void AAPistol::AddWeaponInputContext()
 {
-
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	if (!PC) return;
 
@@ -170,22 +125,17 @@ void AAPistol::AddWeaponInputContext()
 	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PC->InputComponent))
 	{
 
-		if (IA_Shoot_Left)
-			EIC->BindAction(IA_Shoot_Left, ETriggerEvent::Started, this, &AAPistol::OnShootLeft);
+		if (IA_Shoot_Left) EIC->BindAction(IA_Shoot_Left, ETriggerEvent::Started, this, &AAPistol::OnShootLeft);
 
-		if (IA_Shoot_Right)
-			EIC->BindAction(IA_Shoot_Right, ETriggerEvent::Started, this, &AAPistol::OnShootRight);
+		if (IA_Shoot_Right) EIC->BindAction(IA_Shoot_Right, ETriggerEvent::Started, this, &AAPistol::OnShootRight);
 	}
 
 	if (ULocalPlayer* LP = PC->GetLocalPlayer())
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-			LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
-			if (IMC_Weapon_Left)
-				Subsystem->AddMappingContext(IMC_Weapon_Left, 1);
-			if (IMC_Weapon_Right)
-				Subsystem->AddMappingContext(IMC_Weapon_Right, 1);
+			if (IMC_Weapon_Left) Subsystem->AddMappingContext(IMC_Weapon_Left, 1);
+			if (IMC_Weapon_Right) Subsystem->AddMappingContext(IMC_Weapon_Right, 1);
 		}
 	}
 }
@@ -200,15 +150,11 @@ void AAPistol::RemoveWeaponInputContext()
 
 	if (ULocalPlayer* LP = PC->GetLocalPlayer())
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-			LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("RemoveWeaponInputContext called"));
-			if (IMC_Weapon_Left)
-				Subsystem->RemoveMappingContext(IMC_Weapon_Left);
+			if (IMC_Weapon_Left) Subsystem->RemoveMappingContext(IMC_Weapon_Left);
 
-			if (IMC_Weapon_Right)
-				Subsystem->RemoveMappingContext(IMC_Weapon_Right);
+			if (IMC_Weapon_Right) Subsystem->RemoveMappingContext(IMC_Weapon_Right);
 		}
 	}
 }

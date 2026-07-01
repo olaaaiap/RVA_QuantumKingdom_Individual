@@ -12,25 +12,20 @@ class QUANTUMKINGDOM_API AATarget : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AATarget();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-    // Componentes
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class UBoxComponent* Box;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class UStaticMeshComponent* StaticMesh;
 
-    // Variables editables desde el editor
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Target")
     bool IsMobile;
 

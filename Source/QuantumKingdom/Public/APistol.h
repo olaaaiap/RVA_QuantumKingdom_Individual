@@ -22,14 +22,11 @@ class QUANTUMKINGDOM_API AAPistol : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AAPistol();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	//Componentes
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* SM_Pistol;
 
@@ -40,7 +37,6 @@ protected:
 	USceneComponent* MuzzleLocation;
 
 
-	//Variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int32 CurrentAmmo;
 
@@ -53,7 +49,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Haptics")
 	UHapticFeedbackEffect_Base* PistolFireHapticEffect;
 
-	//Input
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* IA_Shoot_Left;
 
@@ -66,20 +61,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* IMC_Weapon_Right;
 
-	//Projectile
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
 	TSubclassOf<AAProjectile> ProjectileClass;
 
+	//Funciones para cuando el arma se agarra / se suelta
 	UFUNCTION(BlueprintCallable, Category = "Grab")
 	void OnWeaponGrabbed();
 
 	UFUNCTION(BlueprintCallable, Category = "Grab")
 	void OnWeaponDropped();
 
-	//Disparo
+	//Disparar
 	void OnShootLeft();
 	void OnShootRight();
 
+	//Variable para saber si se está agarrando el arma. si es asi, no se disparará
 	UPROPERTY()
 	bool bIsHeld = false;
 

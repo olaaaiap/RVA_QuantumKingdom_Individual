@@ -5,6 +5,6 @@
 
 void AAPistolMenu::TryShoot(bool bIsLeftHand)
 {
-    if (!bIsHeld) return;
+    if (!bIsHeld) return; //Para que no dispare si no se está agarrando
     SpawnProjectile(bIsLeftHand);
 }

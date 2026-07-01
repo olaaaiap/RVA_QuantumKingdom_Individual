@@ -5,45 +5,34 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
-// Sets default values
 AAProjectile::AAProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//SPhere collision
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	RootComponent = SphereCollision;
 	SphereCollision->SetCollisionProfileName(TEXT("Projectile"));
 
-
-	//Static mesh
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(RootComponent);
 
-	//Movimiento de projectile
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->UpdatedComponent = SphereCollision;
 	ProjectileMovement->bShouldBounce = false;
 
-	ProjectileMovement->InitialSpeed = 1000.f;      // velocidad inicial
-	ProjectileMovement->MaxSpeed = 3000.f;           // velocidad máxima
-	ProjectileMovement->ProjectileGravityScale = 0.f; // 0 = sin gravedad, 1 = gravedad normal
+	ProjectileMovement->InitialSpeed = 1000.f;
+	ProjectileMovement->MaxSpeed = 3000.f;
+	ProjectileMovement->ProjectileGravityScale = 0.f;
 
 }
 
-// Called when the game starts or when spawned
 void AAProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SphereCollision->OnComponentBeginOverlap.AddDynamic(
-		this, &AAProjectile::OnSphereBeginOverlap
-	);
+	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AAProjectile::OnSphereBeginOverlap);
 
-	ProjectileMovement->OnProjectileStop.AddDynamic(
-		this, &AAProjectile::OnProjectileStop
-	);
+	ProjectileMovement->OnProjectileStop.AddDynamic(this, &AAProjectile::OnProjectileStop);
 
 }
 
@@ -58,48 +47,31 @@ void AAProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent
 		OtherComp->AddImpulse(Impulse, NAME_None, false);
 	}
 
-	// ── Pasa también OtherComp ──────────────────
-	HandleTagActions(OtherActor, OtherComp);
+	HandleInitialButtons(OtherActor, OtherComp);
 }
 
 void AAProjectile::OnProjectileStop(const FHitResult& ImpactResult)
 {
-	// ── IMAGE 3: Disable Collision ────────────────────────────────
 	SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	// ── IMAGE 2: Attach al componente golpeado ────────────────────
 	UPrimitiveComponent* HitComp = ImpactResult.GetComponent();
 	if (HitComp)
 	{
-		FAttachmentTransformRules AttachRules(
-			EAttachmentRule::KeepWorld,  // Location Rule
-			EAttachmentRule::KeepWorld,  // Rotation Rule
-			EAttachmentRule::KeepWorld,  // Scale Rule
-			/*bWeldSimulatedBodies=*/true
-		);
+		FAttachmentTransformRules AttachRules(EAttachmentRule::KeepWorld,EAttachmentRule::KeepWorld,EAttachmentRule::KeepWorld, true);
 		AttachToComponent(HitComp, AttachRules);
 	}
 
-	// ── IMAGE 2: Set Actor Location al Impact Point ───────────────
 	if (ImpactResult.bBlockingHit || ImpactResult.bStartPenetrating)
 	{
-		SetActorLocation(
-			ImpactResult.ImpactPoint,
-			/*bSweep=*/false,
-			nullptr,
-			ETeleportType::None
-		);
+		SetActorLocation(ImpactResult.ImpactPoint,false,nullptr,ETeleportType::None);
 	}
 }
 
 
-void AAProjectile::HandleTagActions(AActor* OtherActor, UPrimitiveComponent* OtherComp)
+void AAProjectile::HandleInitialButtons(AActor* OtherActor, UPrimitiveComponent* OtherComp)
 {
 	if (!OtherActor || !OtherComp) return;
 
-	
-
-	// Comprueba tag en el actor Y en el componente
 	bool bHasPlay = OtherActor->ActorHasTag("Play") || OtherComp->ComponentHasTag("Play");
 	bool bHasSettings = OtherActor->ActorHasTag("Settings") || OtherComp->ComponentHasTag("Settings");
 	bool bHasExit = OtherActor->ActorHasTag("Exit") || OtherComp->ComponentHasTag("Exit");
@@ -112,18 +84,11 @@ void AAProjectile::HandleTagActions(AActor* OtherActor, UPrimitiveComponent* Oth
 
 	if (bHasSettings)
 	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Settings hit"));
 		return;
 	}
 
 	if (bHasExit)
 	{
-		UKismetSystemLibrary::QuitGame(
-			this,
-			UGameplayStatics::GetPlayerController(this, 0),
-			EQuitPreference::Quit,
-			false
-		);
+		UKismetSystemLibrary::QuitGame(this, UGameplayStatics::GetPlayerController(this, 0), EQuitPreference::Quit,	false);
 	}
 }

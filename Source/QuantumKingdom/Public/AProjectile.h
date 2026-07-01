@@ -15,41 +15,28 @@ class QUANTUMKINGDOM_API AAProjectile : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AAProjectile();
-
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	USphereComponent* SphereCollision;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* StaticMesh;
+	USphereComponent* SphereCollision; //Collider de esfera
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UProjectileMovementComponent* ProjectileMovement;
+	UStaticMeshComponent* StaticMesh; //static mesh del projectile
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UProjectileMovementComponent* ProjectileMovement; //Para el movimiento del projectile
 
 public:	
-	// Called every frame
-	//virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION()
-	void OnSphereBeginOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32                OtherBodyIndex,
-		bool                 bFromSweep,
-		const FHitResult& SweepResult
-	);
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,	AActor* OtherActor,	UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep,const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnProjectileStop(const FHitResult& ImpactResult);
 
 private:
-	//void HandleTagActions(AActor* OtherActor);
-	void HandleTagActions(AActor* OtherActor, UPrimitiveComponent* OtherComp);
-
+	void HandleInitialButtons(AActor* OtherActor, UPrimitiveComponent* OtherComp);
 
 };
