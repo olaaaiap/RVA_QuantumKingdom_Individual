@@ -15,29 +15,21 @@ class QUANTUMKINGDOM_API AADamageSphere : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AADamageSphere();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USphereComponent* Sphere;
+	USphereComponent* Sphere; //Collider de esfera
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UStaticMeshComponent* En_Campfire_01;
+	UStaticMeshComponent* En_Campfire_01; //Static mesh de la base del fuego
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UParticleSystemComponent* P_Fire;
+	UParticleSystemComponent* P_Fire; //Sistema de particulas del fuego
 public:	
 	UFUNCTION()
-	void OnSphereBeginOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32                OtherBodyIndex,
-		bool                 bFromSweep,
-		const FHitResult& SweepResult
-	);
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
